@@ -6,6 +6,7 @@ import handleZodError from '../errors/handleZodError';
 import { ZodError } from 'zod';
 import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 import AppError from '../errors/AppError';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   //setting default values
@@ -20,7 +21,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     error = result?.error;
   } else if (err instanceof PrismaClientValidationError) {
     message = 'MyError: ' + err.message;
-    console.log(err);
   } else if (err instanceof AppError) {
     statusCode = err?.statusCode;
     message = err.message;

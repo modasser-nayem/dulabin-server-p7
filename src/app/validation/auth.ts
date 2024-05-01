@@ -74,5 +74,79 @@ const loginUser = z.object({
   }),
 });
 
-const authSchemasValidation = { registerUser, loginUser };
+const refreshToken = z.object({
+  cookies: z.object({
+    refresh_token: z
+      .string({ required_error: 'refresh_token is required in cookies' })
+      .refine((value) => value !== '', {
+        message: 'refresh_token is required in cookies',
+      }),
+  }),
+});
+
+const changePassword = z.object({
+  body: z
+    .object({
+      currentPassword: z
+        .string({ required_error: 'currentPassword is required' })
+        .refine((value) => value !== '', {
+          message: 'Current password is required',
+        }),
+      newPassword: z
+        .string({ required_error: 'newPassword is required' })
+        .min(6, { message: 'New Password must be 6 character' }),
+      confirmPassword: z
+        .string({
+          required_error: 'confirmPassword is required',
+        })
+        .refine((value) => value !== '', {
+          message: 'Confirm password is required',
+        }),
+    })
+    .refine((value) => value.newPassword === value.confirmPassword, {
+      message: "Confirm Password does't match",
+    }),
+});
+
+const forgotPassword = z.object({
+  body: z.object({
+    email: z
+      .string({ required_error: 'email is required!' })
+      .email({ message: 'Invalid email address' })
+      .refine((value) => value !== '', { message: 'Email is required!' }),
+  }),
+});
+
+const resetPassword = z.object({
+  body: z
+    .object({
+      token: z
+        .string({ required_error: 'token is required' })
+        .refine((value) => value !== '', {
+          message: 'token is required',
+        }),
+      newPassword: z
+        .string({ required_error: 'newPassword is required' })
+        .min(6, { message: 'New Password must be 6 character' }),
+      confirmPassword: z
+        .string({
+          required_error: 'confirmPassword is required',
+        })
+        .refine((value) => value !== '', {
+          message: 'Confirm password is required',
+        }),
+    })
+    .refine((value) => value.newPassword === value.confirmPassword, {
+      message: "Confirm Password does't match",
+    }),
+});
+
+const authSchemasValidation = {
+  registerUser,
+  loginUser,
+  refreshToken,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+};
 export default authSchemasValidation;

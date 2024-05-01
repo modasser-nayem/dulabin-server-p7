@@ -15,6 +15,18 @@ export interface ILoginUser {
   password: string;
 }
 
-export type TForgetPassword = {
+export interface IChangePassword {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export type IForgetPassword = {
   email: string;
+};
+
+export type IResetPassword = {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
 };

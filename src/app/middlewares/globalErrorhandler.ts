@@ -4,6 +4,8 @@ import { ErrorRequestHandler } from 'express';
 import config from '../config';
 import handleZodError from '../errors/handleZodError';
 import { ZodError } from 'zod';
+import { PrismaClientValidationError } from '@prisma/client/runtime/library';
+import AppError from '../errors/AppError';
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   //setting default values
@@ -16,6 +18,26 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     statusCode = result?.statusCode;
     message = result?.message;
     error = result?.error;
+  } else if (err instanceof PrismaClientValidationError) {
+    message = 'MyError: ' + err.message;
+    console.log(err);
+  } else if (err instanceof AppError) {
+    statusCode = err?.statusCode;
+    message = err.message;
+    error = [
+      {
+        path: '',
+        message: err?.message,
+      },
+    ];
+  } else if (err instanceof Error) {
+    message = err.message;
+    error = [
+      {
+        path: '',
+        message: err?.message,
+      },
+    ];
   }
 
   //ultimate return

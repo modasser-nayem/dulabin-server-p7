@@ -19,6 +19,10 @@ const registerUser = async (data: IRegisterUser) => {
     Number(config.bcrypt_salt_rounds),
   );
 
+  if (await prisma.user.findUnique({ where: { username: data.username } })) {
+    throw new AppError(400, 'This username is not available, try unique');
+  }
+
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const { confirmPassword, ...userData } = { ...data };
 

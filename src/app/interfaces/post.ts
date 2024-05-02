@@ -1,4 +1,5 @@
 export interface ICreatePost {
+  userId: string;
   text?: string;
   mediaURL?: string[];
   privacy?: string;

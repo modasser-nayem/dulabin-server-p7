@@ -36,7 +36,7 @@ model User {
 model Post {
   id String @id @default(uuid())
   userId String
-  text String
+  text String?
   mediaURL String[]
   privacy  PostPrivacy @default(friends)
   createdAt DateTime @default(now())

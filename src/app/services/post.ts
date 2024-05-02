@@ -1,8 +1,17 @@
 import { JwtPayload } from 'jsonwebtoken';
 import { ICreatePost, IUpdatePost } from '../interfaces/post';
+import AppError from '../errors/AppError';
+import prisma from '../utils/prisma';
 
 const createPost = async (user: JwtPayload, data: ICreatePost) => {
-  const result = { user, data };
+  if (!data.text && !data.mediaURL?.length) {
+    throw new AppError(400, 'Please provide any content text or media');
+  }
+  data.userId = user.id;
+
+  const result = await prisma.post.create({
+    data: data,
+  });
 
   return result;
 };
@@ -12,7 +21,22 @@ const updatePost = async (
   postId: string,
   data: IUpdatePost,
 ) => {
-  const result = { user, postId, data };
+  const post = await prisma.post.findUnique({ where: { id: postId } });
+
+  if (!post) {
+    throw new AppError(404, 'Post is not found!');
+  }
+
+  if (post.userId !== user.id) {
+    throw new AppError(403, 'Forbidden Access');
+  }
+
+  const result = await prisma.post.update({
+    where: {
+      id: postId,
+    },
+    data: data,
+  });
 
   return result;
 };

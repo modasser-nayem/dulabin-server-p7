@@ -42,27 +42,110 @@ const updatePost = async (
 };
 
 const getAllMyPost = async (user: JwtPayload) => {
-  const result = user;
+  const result = await prisma.post.findMany({
+    where: {
+      userId: user.id,
+    },
+    select: {
+      id: true,
+      text: true,
+      mediaURL: true,
+      privacy: true,
+      createdAt: true,
+      updatedAt: true,
+      _count: true,
+    },
+  });
 
   return result;
 };
 
 const getAllPost = async () => {
-  const result = 'get all post';
+  const result = await prisma.post.findMany({
+    select: {
+      id: true,
+      text: true,
+      mediaURL: true,
+      privacy: true,
+      createdAt: true,
+      _count: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          photoURL: true,
+        },
+      },
+    },
+  });
 
   return result;
 };
 
 const getSinglePost = async (postId: string) => {
-  const result = postId;
+  const result = await prisma.post.findUnique({
+    where: { id: postId },
+    select: {
+      id: true,
+      text: true,
+      mediaURL: true,
+      privacy: true,
+      createdAt: true,
+      comments: {
+        select: {
+          id: true,
+          content: true,
+          reactions: true,
+          createdAt: true,
+          _count: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              photoURL: true,
+            },
+          },
+        },
+      },
+      reactions: {},
+      user: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          photoURL: true,
+        },
+      },
+    },
+  });
+
+  if (!result) {
+    throw new AppError(404, 'Post not found!');
+  }
 
   return result;
 };
 
 const deletePost = async (user: JwtPayload, postId: string) => {
-  const result = { user, postId };
+  const post = await prisma.post.findUnique({ where: { id: postId } });
 
-  return result;
+  if (!post) {
+    throw new AppError(404, 'Post is not found!');
+  }
+
+  if (post.userId !== user.id) {
+    throw new AppError(403, 'Forbidden Access');
+  }
+
+  await prisma.$transaction(async (trans) => {
+    await trans.post.delete({ where: { id: post.id } });
+    await trans.comment.deleteMany({ where: { postId: post.id } });
+    await trans.reaction.deleteMany({ where: { postId: post.id } });
+  });
+
+  return null;
 };
 
 const postServices = {

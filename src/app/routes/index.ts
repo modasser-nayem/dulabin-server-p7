@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRoutes from './auth';
 import userRoutes from './user';
 import postRoutes from './post';
+import commentRoutes from './comment';
 
 const routes = Router();
 
@@ -17,6 +18,10 @@ const routeItems = [
   {
     path: '/posts',
     route: postRoutes,
+  },
+  {
+    path: '/comments',
+    route: commentRoutes,
   },
 ];
 

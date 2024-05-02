@@ -19,15 +19,8 @@ const updateComment = z.object({
   }),
 });
 
-const updateCommentStatus = z.object({
-  body: z.object({
-    status: z.enum(['hide', 'unhide']),
-  }),
-});
-
 const commentSchemasValidation = {
   createComment,
   updateComment,
-  updateCommentStatus,
 };
 export default commentSchemasValidation;

@@ -35,7 +35,6 @@ const updateCommentStatus = catchAsync(async (req, res) => {
   const result = await commentServices.updateCommentStatus({
     user: req.user,
     commentId: req.params.id,
-    data: req.body,
   });
 
   sendResponse(res, {
@@ -63,6 +62,7 @@ const deleteComment = catchAsync(async (req, res) => {
 const getAllCommentByPostId = catchAsync(async (req, res) => {
   const result = await commentServices.getAllCommentByPostId({
     postId: req.params.id,
+    user: req.user,
   });
 
   sendResponse(res, {

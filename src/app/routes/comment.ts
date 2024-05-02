@@ -23,12 +23,7 @@ router.put(
 );
 
 // update comment status
-router.patch(
-  '/:id',
-  auth(),
-  validateRequest(commentSchemasValidation.updateCommentStatus),
-  commentControllers.updateCommentStatus,
-);
+router.patch('/:id', auth(), commentControllers.updateCommentStatus);
 
 // delete comment
 router.delete('/:id', auth(), commentControllers.deleteComment);

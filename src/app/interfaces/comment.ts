@@ -1,5 +1,3 @@
-import { CommentStatus } from '@prisma/client';
-
 export interface ICreateComment {
   userId: string;
   postId: string;
@@ -8,8 +6,4 @@ export interface ICreateComment {
 
 export interface IUpdateComment {
   content: string;
-}
-
-export interface IUpdateCommentStatus {
-  status: CommentStatus;
 }

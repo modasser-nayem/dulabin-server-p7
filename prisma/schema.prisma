@@ -36,10 +36,9 @@ model User {
 model Post {
   id String @id @default(uuid())
   userId String
-  content String
-  mediaType MediaType
+  text String
   mediaURL String[]
-  privacy  PostPrivacy
+  privacy  PostPrivacy @default(friends)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user User @relation(fields: [userId], references: [id])
@@ -77,12 +76,6 @@ model Reaction {
   comment Comment? @relation(fields: [commentId], references: [id])
 
   @@map("reactions")
-}
-
-enum MediaType {
-  text
-  video
-  image
 }
 
 enum PostPrivacy {

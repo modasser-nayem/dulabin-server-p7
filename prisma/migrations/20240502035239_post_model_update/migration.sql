@@ -1,7 +1,4 @@
 -- CreateEnum
-CREATE TYPE "MediaType" AS ENUM ('text', 'video', 'image');
-
--- CreateEnum
 CREATE TYPE "PostPrivacy" AS ENUM ('public', 'friends', 'private');
 
 -- CreateEnum
@@ -17,11 +14,11 @@ CREATE TABLE "users" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "bio" TEXT NOT NULL,
-    "photoURL" TEXT NOT NULL,
-    "dateOfBirth" TIMESTAMP(3) NOT NULL,
-    "lastLoginAt" TIMESTAMP(3) NOT NULL,
-    "address" TEXT NOT NULL,
+    "bio" TEXT,
+    "photoURL" TEXT,
+    "dateOfBirth" TIMESTAMP(3),
+    "lastLoginAt" TIMESTAMP(3),
+    "address" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -32,8 +29,7 @@ CREATE TABLE "users" (
 CREATE TABLE "posts" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "content" TEXT NOT NULL,
-    "mediaType" "MediaType" NOT NULL,
+    "text" TEXT NOT NULL,
     "mediaURL" TEXT[],
     "privacy" "PostPrivacy" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -48,7 +44,7 @@ CREATE TABLE "comments" (
     "userId" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
-    "status" "CommentStatus" NOT NULL,
+    "status" "CommentStatus" NOT NULL DEFAULT 'unhide',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -60,7 +56,7 @@ CREATE TABLE "reactions" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
-    "commentId" TEXT NOT NULL,
+    "commentId" TEXT,
     "reaction" "ReactOption" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -87,4 +83,4 @@ ALTER TABLE "reactions" ADD CONSTRAINT "reactions_userId_fkey" FOREIGN KEY ("use
 ALTER TABLE "reactions" ADD CONSTRAINT "reactions_postId_fkey" FOREIGN KEY ("postId") REFERENCES "posts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "reactions" ADD CONSTRAINT "reactions_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "comments"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "reactions" ADD CONSTRAINT "reactions_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "comments"("id") ON DELETE SET NULL ON UPDATE CASCADE;

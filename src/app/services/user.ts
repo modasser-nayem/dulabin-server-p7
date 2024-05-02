@@ -50,7 +50,7 @@ const getUserProfile = async (username: string) => {
         },
         select: {
           id: true,
-          content: true,
+          text: true,
           createdAt: true,
           mediaURL: true,
         },

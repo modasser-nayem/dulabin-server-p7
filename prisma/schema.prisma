@@ -14,68 +14,86 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  username String @unique
-  name String
-  email String
-  password String
-  bio String?
-  photoURL String?
+  id          String       @id @default(uuid())
+  username    String       @unique
+  name        String
+  email       String
+  password    String
+  bio         String?
+  photoURL    String?
   dateOfBirth DateTime?
   lastLoginAt DateTime?
-  address String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts Post[]
-  comments Comment[]
-  reactions Reaction[]
+  address     String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  posts       Post[]
+  comments    Comment[]
+  reactions   Reaction[]
+  friends     Friendship[] @relation(name: "friends")
+  requestor   Friendship[] @relation(name: "requestor")
 
   @@map("users")
 }
 
 model Post {
-  id String @id @default(uuid())
-  userId String
-  text String?
-  mediaURL String[]
-  privacy  PostPrivacy @default(friends)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user User @relation(fields: [userId], references: [id])
-  comments Comment[]
+  id        String      @id @default(uuid())
+  userId    String
+  text      String?
+  mediaURL  String[]
+  privacy   PostPrivacy @default(friends)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  user      User        @relation(fields: [userId], references: [id])
+  comments  Comment[]
   reactions Reaction[]
 
   @@map("posts")
 }
 
 model Comment {
-  id String @id @default(uuid())
-  userId String 
-  postId String
-  content String
-  status CommentStatus @default(unhide)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user User @relation(fields: [userId], references: [id])
-  post Post @relation(fields: [postId], references: [id])
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  postId          String
+  post            Post          @relation(fields: [postId], references: [id])
+  parentCommentId String?
+  content         String
+  status          CommentStatus @default(unhide)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
   reactions Reaction[]
 
   @@map("comments")
 }
 
 model Reaction {
-  id String @id @default(uuid())
-  userId String 
-  postId String
+  id        String      @id @default(uuid())
+  userId    String
+  postId    String
   commentId String?
-  reaction ReactOption
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user User @relation(fields: [userId], references: [id])
-  post Post @relation(fields: [postId], references: [id])
-  comment Comment? @relation(fields: [commentId], references: [id])
+  reaction  ReactOption
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  user      User        @relation(fields: [userId], references: [id])
+  post      Post        @relation(fields: [postId], references: [id])
+  comment   Comment?    @relation(fields: [commentId], references: [id])
 
   @@map("reactions")
+}
+
+model Friendship {
+  userId     String
+  requestId  String
+  following  Boolean   @default(true)
+  isApproved Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime?
+  user       User      @relation(name: "friends", fields: [userId], references: [id])
+  requestor  User      @relation(name: "requestor", fields: [requestId], references: [id])
+
+  @@id([userId, requestId])
+  @@map("friendships")
 }
 
 enum PostPrivacy {

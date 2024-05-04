@@ -3,6 +3,7 @@ import authRoutes from './auth';
 import userRoutes from './user';
 import postRoutes from './post';
 import commentRoutes from './comment';
+import friendshipRoutes from './friendship';
 
 const routes = Router();
 
@@ -14,6 +15,10 @@ const routeItems = [
   {
     path: '/users',
     route: userRoutes,
+  },
+  {
+    path: '/friendships',
+    route: friendshipRoutes,
   },
   {
     path: '/posts',

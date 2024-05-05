@@ -4,6 +4,7 @@ import userRoutes from './user';
 import postRoutes from './post';
 import commentRoutes from './comment';
 import friendshipRoutes from './friendship';
+import reactionRoutes from './reaction';
 
 const routes = Router();
 
@@ -27,6 +28,10 @@ const routeItems = [
   {
     path: '/comments',
     route: commentRoutes,
+  },
+  {
+    path: '/reactions',
+    route: reactionRoutes,
   },
 ];
 
